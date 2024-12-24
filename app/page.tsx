@@ -1,12 +1,24 @@
 "use client"
 
+import Image from "next/image"
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-       <h2>
-        Hello world!
-       </h2>
-    </div>
-  );
+return (
+  <div className="flex h-screen max-h-screen">
+    <section className="remove-scrollbar container my-auto">
+     <div className="sub-container max-w-[496px]">
+      <Image 
+      src="/assets/images/onboarding-img.png"
+       alt="Hero Image"
+       width={596}
+       height={696}
+       className="rounded-lg object-conver"
+      />
+     </div>
+     <form action="">
+      <input type="text" />
+     </form>
+    </section>
+  </div>
+)
 }
