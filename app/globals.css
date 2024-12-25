@@ -21,7 +21,6 @@
   }
 
   .remove-scrollbar::-webkit-scrollbar-thumb:hover {
-    /* background: #1e2238; */
     background: transparent;
   }
 }
@@ -105,7 +104,7 @@
 
   /* ==== File Upload */
   .file-upload {
-    @apply text-12-regular flex cursor-pointer  flex-col items-center justify-center gap-3 rounded-md border border-dashed border-dark-500 bg-dark-400 p-5;
+    @apply text-12-regular flex cursor-pointer flex-col items-center justify-center gap-3 rounded-md border border-dashed border-dark-500 bg-dark-400 p-5;
   }
 
   .file-upload_label {
@@ -219,7 +218,7 @@
   }
 
   .shad-select-trigger {
-    @apply bg-dark-400  placeholder:text-dark-600 border-dark-500 h-11 focus:ring-0 focus:ring-offset-0 !important;
+    @apply bg-dark-400 placeholder:text-dark-600 border-dark-500 h-11 focus:ring-0 focus:ring-offset-0 !important;
   }
 
   .shad-select-content {
@@ -273,7 +272,7 @@
 
   /* =====  REACT DATE PICKER OVERRIDES */
   .date-picker {
-    @apply overflow-hidden border-transparent w-full placeholder:text-dark-600  h-11 text-14-medium rounded-md px-3 outline-none !important;
+    @apply overflow-hidden border-transparent w-full placeholder:text-dark-600 h-11 text-14-medium rounded-md px-3 outline-none !important;
   }
 }
 
@@ -347,4 +346,37 @@
 
 .PhoneInputInput::placeholder {
   color: #1a1d21;
+}
+
+.input-phone {
+  @apply mt-2 h-11 rounded-md px-3 text-sm border bg-dark-400 placeholder:text-dark-600 border-dark-500 !important;
+}
+
+/* Highlighted Change: Ensure dropdown modal background is dark */
+.PhoneInputCountrySelect {
+  background-color: #1a1d21 !important;
+  color: #ffffff !important;
+  border: 1px solid #363a3d !important;
+  border-radius: 4px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.25);
+}
+
+/* Highlighted Change: Adjust dropdown hover styles */
+.PhoneInputCountrySelectOption:hover {
+  background-color: #363a3d !important;
+  color: #24ae7c !important;
+}
+
+/* Highlighted Change: Handle autofill styles */
+.input-phone:-webkit-autofill,
+.input-phone:-webkit-autofill:hover,
+.input-phone:-webkit-autofill:focus,
+.input-phone:-webkit-autofill:active {
+  background-color: #1a1d21 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.input-phone:-webkit-autofill::placeholder {
+  color: #abb8c4 !important;
 }
