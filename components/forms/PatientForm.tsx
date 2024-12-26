@@ -9,6 +9,7 @@ import SubmitButton from "../SubmitButton";
 import { useState } from "react";
 import { UserFormValidation } from "@/lib/validation";
 import { useRouter } from "next/navigation";
+import { createUser } from "@/lib/actions/patient.actions";
 
 
 
@@ -35,24 +36,27 @@ const PatientForm = () => {
     },
   });
 
-  async function onSubmit({name,email,phone}: z.infer<typeof UserFormValidation>) {
-    // console.log(values);
+  const onSubmit = async (values: z.infer<typeof UserFormValidation>) => {
     setIsLoading(true);
 
     try {
-      const userData = {name,email,phone};
-      console.log(userData);
-      // const user = await createUser(userData);
-      // if(user){
-      //   setIsLoading(false);
-      //   console.log("User created successfully");
-      //   router.push(`/patients/${user.$id}/register`);
-      // }
-    } 
-    catch (error) {
+      const user = {
+        name: values.name,
+        email: values.email,
+        phone: values.phone,
+      };
+
+      const newUser = await createUser(user);
+
+      if (newUser) {
+        router.push(`/patients/${newUser.$id}/register`);
+      }
+    } catch (error) {
       console.log(error);
-    }   
-  }
+    }
+
+    setIsLoading(false);
+  };
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 flex-1">
