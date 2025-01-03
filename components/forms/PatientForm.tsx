@@ -95,7 +95,7 @@ const PatientForm = () => {
           iconAlt="phone"
         />
 
-        <SubmitButton isLoading={isLoading} disabled={isLoading}>
+        <SubmitButton isLoading={isLoading} >
           Get Started
         </SubmitButton>
       </form>
