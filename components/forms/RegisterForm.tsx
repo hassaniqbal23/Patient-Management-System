@@ -31,7 +31,7 @@ const RegisterForm = ({ user }: { user: User }) => {
   });
 
   const onSubmit = async (values: z.infer<typeof UserFormValidation>) => {
-    if (isLoading) return; // Prevent multiple submissions
+    if (isLoading) return;
 
     setIsLoading(true);
 
@@ -40,15 +40,18 @@ const RegisterForm = ({ user }: { user: User }) => {
         name: values.name,
         email: values.email,
         phone: values.phone,
+        // ...other fields...
       };
 
       const newUser = await createUser(user);
 
       if (newUser) {
         router.push(`/patients/${newUser.$id}/register`);
+        form.reset();
       }
     } catch (error) {
-      console.log(error);
+      console.error("Failed to create user:", error);
+      alert("Failed to create user. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -56,17 +59,14 @@ const RegisterForm = ({ user }: { user: User }) => {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-12 flex-1"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-12 flex-1">
         <section className="space-y-4">
           <h1 className="header">Welcome 👋</h1>
           <p className="text-dark-700">Let us know more about yourself.</p>
         </section>
         <section className="space-y-6">
           <div className="mb-9 space-y-1">
-            <h2 className="sub-header">Personal Informaction</h2>
+            <h2 className="sub-header">Personal Information</h2>
           </div>
         </section>
         <CustomFormField
@@ -78,7 +78,6 @@ const RegisterForm = ({ user }: { user: User }) => {
           iconSrc="/assets/icons/user.svg"
           iconAlt="user"
         />
-
         <div className="grid grid-col-2 gap-6 md:grid-cols-2">
           <CustomFormField
             control={form.control}
@@ -89,7 +88,6 @@ const RegisterForm = ({ user }: { user: User }) => {
             iconSrc="/assets/icons/email.svg"
             iconAlt="email"
           />
-
           <CustomFormField
             control={form.control}
             fieldType={FormFieldType.PHONE_INPUT}
@@ -107,7 +105,6 @@ const RegisterForm = ({ user }: { user: User }) => {
             name="birthDate"
             label="Date of Birth"
           />
-
           <CustomFormField
             fieldType={FormFieldType.SKELETON}
             control={form.control}
@@ -133,7 +130,6 @@ const RegisterForm = ({ user }: { user: User }) => {
             )}
           />
         </div>
-
         <div className="grid grid-col-2 gap-6 md:grid-cols-2">
           <CustomFormField
             control={form.control}
@@ -142,7 +138,6 @@ const RegisterForm = ({ user }: { user: User }) => {
             label="Address"
             placeholder="14th street Gilgit"
           />
-
           <CustomFormField
             control={form.control}
             fieldType={FormFieldType.INPUT}
@@ -151,7 +146,6 @@ const RegisterForm = ({ user }: { user: User }) => {
             placeholder="Software Engineer"
           />
         </div>
-
         <div className="grid grid-col-2 gap-6 md:grid-cols-2">
           <CustomFormField
             control={form.control}
@@ -160,7 +154,6 @@ const RegisterForm = ({ user }: { user: User }) => {
             label="Emergency contact name"
             placeholder="Guardian's Name"
           />
-
           <CustomFormField
             control={form.control}
             fieldType={FormFieldType.PHONE_INPUT}
@@ -170,9 +163,8 @@ const RegisterForm = ({ user }: { user: User }) => {
           />
         </div>
         <section className="space-y-4">
-          <h1 className="header">Medical Informaction </h1>
+          <h1 className="header">Medical Information</h1>
         </section>
-
         <CustomFormField
           control={form.control}
           fieldType={FormFieldType.SELECT}
@@ -195,22 +187,37 @@ const RegisterForm = ({ user }: { user: User }) => {
             </SelectItem>
           ))}
         </CustomFormField>
-
         <div className="grid grid-col-2 gap-6 md:grid-cols-2">
-        <CustomFormField
+          <CustomFormField
             control={form.control}
             fieldType={FormFieldType.INPUT}
             name="insuranceProvider"
             label="Insurance provider"
             placeholder="BlueCross BlueShield"
           />
-
           <CustomFormField
             control={form.control}
             fieldType={FormFieldType.INPUT}
             name="insurancePolicyNumber"
             label="Insurance policy number"
             placeholder="ABC123456789"
+          />
+        </div>
+
+        <div className="grid grid-col-2 gap-6 md:grid-cols-2">
+          <CustomFormField
+            control={form.control}
+            fieldType={FormFieldType.TEXTAREA}
+            name="allergies"
+            label="Allergies (if any)"
+            placeholder="Peanuts, Pollen, penicillen."
+          />
+          <CustomFormField
+            control={form.control}
+            fieldType={FormFieldType.TEXTAREA}
+            name="currentMedication"
+            label="Current medication (if any)"
+            placeholder="Ibuprofen 200mg, paracetamol 500mg"
           />
         </div>
         <SubmitButton isLoading={isLoading}>Get Started</SubmitButton>
