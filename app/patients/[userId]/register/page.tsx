@@ -6,7 +6,7 @@ import Link from "next/link";
 const Register = async ({ params: { userId } }: SearchParamProps) => {
   const user = await getUser(userId);
   return (
-    <div className="flex h-screen max-h-screen text-gray-300">
+    <div className="flex h-screen max-h-screen text-gray-300 ">
       {/* TODO: OTP VARIFICATION | PASSKEYMODAL */}
       <section className="remove-scrollbar container my-auto">
         <div className="sub-container ">
@@ -20,14 +20,15 @@ const Register = async ({ params: { userId } }: SearchParamProps) => {
         </div>
         {/* <PatientForm /> */}
         <RegisterForm user={user} />
-        <div className="text-14-regular mt-20 flex justify-between">
-          <p className="justify-items-end text-dark-600 xl:text-left">
-            © 2024 CarePulse
+        <p className="copyright py-12">
+            © 2025 CarePulse
           </p>
+        {/* <div className="text-14-regular mt-20 flex justify-between py-4">
+        
           <Link href="/?admin=true" className="text-green-500">
             Admin
           </Link>
-        </div>
+        </div> */}
       </section>
       {/* <Image
         src="/assets/images/register-img.png"
