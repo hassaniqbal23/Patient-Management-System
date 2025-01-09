@@ -19,23 +19,8 @@ const Register = async ({ params: { userId } }: SearchParamProps) => {
         </div>
         {/* <PatientForm /> */}
         <RegisterForm user={user} />
-        <p className="copyright py-12">
-            © 2025 CarePulse
-          </p>
-        {/* <div className="text-14-regular mt-20 flex justify-between py-4">
-        
-          <Link href="/?admin=true" className="text-green-500">
-            Admin
-          </Link>
-        </div> */}
+        <p className="copyright py-12">© 2025 CarePulse</p>
       </section>
-      {/* <Image
-        src="/assets/images/register-img.png"
-        alt="Patient"
-        width={1000}
-        height={1000}
-        className="side-img max-w-[300px] "
-      /> */}
     </div>
   );
 };
