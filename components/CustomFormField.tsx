@@ -105,28 +105,30 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
           </div>
         </FormControl>
       );
-    case FormFieldType.DATE_PICKER:
-      return (
-        <div className="flex rounded-md border border-dark-500 bg-dark-400 text-white">
-          <Image
-            src="/assets/icons/calendar.svg"
-            alt="calendar"
-            width={24}
-            height={24}
-            className="ml-2"
-          />
-          <FormControl>
-            <DatePicker
-              selected={field.value}
-              onChange={(date) => field.onChange(date)}
-              // showTimeSelect={showTimeSelect ?? false}
-              // dateFormat={dateFormat ?? "yyyy-MM-dd"}
-              timeInputLabel="Time:"
-              wrapperClassName="date-picker"
+      case FormFieldType.DATE_PICKER:
+        return (
+          <div className="flex rounded-md border border-dark-500 bg-dark-400 text-white">
+            <Image
+              src="/assets/icons/calendar.svg"
+              alt="calendar"
+              width={24}
+              height={24}
+              className="ml-2"
             />
-          </FormControl>
-        </div>
-      );
+            <FormControl>
+              <DatePicker
+                selected={field.value}
+                onChange={(date) => field.onChange(date)}
+                showTimeSelect={props.showTimeSelect}
+                dateFormat={props.dateFormat || "yyyy-MM-dd"}
+                timeInputLabel="Time:"
+                wrapperClassName="date-picker"
+                timeIntervals={15} // Add this for 15-minute intervals
+                timeFormat="HH:mm" // Add this for 24-hour format
+              />
+            </FormControl>
+          </div>
+        );
 
     case FormFieldType.SELECT:
       return (
