@@ -1,14 +1,12 @@
 "use client";
 import "react-datepicker/dist/react-datepicker.css";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Form } from "@/components/ui/form";
-import { createUser } from "@/lib/actions/patient.actions";
-import { UserFormValidation } from "@/lib/validation";
+import { getAppointmentSchema } from "@/lib/validation";
 
 import "react-phone-number-input/style.css";
 import CustomFormField, { FormFieldType } from "../CustomFormField";
@@ -16,6 +14,8 @@ import SubmitButton from "../SubmitButton";
 import Image from "next/image";
 import { SelectItem } from "../ui/select";
 import { Doctors } from "@/constants";
+import { createAppointment } from "@/lib/actions/appointment.actions";
+import { useRouter } from "next/navigation";
 
 interface AppointmentFormProps {
   type: "create" | "cancel" | "schedule";
@@ -27,32 +27,57 @@ export const AppointmentForm = ({
   userId,
   patientId,
 }: AppointmentFormProps) => {
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const AppointmentFormValidation = getAppointmentSchema(type);
 
-  const form = useForm<z.infer<typeof UserFormValidation>>({
-    resolver: zodResolver(UserFormValidation),
+  const form = useForm<z.infer<typeof AppointmentFormValidation>>({
+    resolver: zodResolver(AppointmentFormValidation),
     defaultValues: {
-      name: "",
-      email: "",
-      phone: "",
+      primaryPhysician: "",
+      schedule: new Date(),
+      reason: "",
+      note: "",
+      cancellationReason: "",
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof UserFormValidation>) => {
+  const onSubmit = async (
+    values: z.infer<typeof AppointmentFormValidation>
+  ) => {
     setIsLoading(true);
 
+    let status;
+    switch (type) {
+      case "schedule":
+        status = "scheduled";
+        break;
+      case "cancel":
+        status = "canceled";
+        break;
+      default:
+        status = "pending";
+        break;
+    }
     try {
-      const user = {
-        name: values.name,
-        email: values.email,
-        phone: values.phone,
-      };
+      if (type === "create" && patientId) {
+        const appointmentData = {
+          userId,
+          patient: patientId,
+          primaryPhysician: values.primaryPhysician,
+          schedule: new Date(values.schedule),
+          reason: values.reason!,
+          note: values.note,
+          status: status as Status,
+        };
+        const appointment = await createAppointment(appointmentData);
 
-      const newUser = await createUser(user);
-
-      if (newUser) {
-        router.push(`/patients/${newUser.$id}/register`);
+        if (appointment) {
+          form.reset();
+          router.push(
+            `/patients/${userId}/new-appointment/success?appointmentId=${appointment.$id}`
+          );
+        }
       }
     } catch (error) {
       console.log(error);
@@ -61,7 +86,7 @@ export const AppointmentForm = ({
     setIsLoading(false);
   };
 
-  let buttonLabel: string | undefined ;
+  let buttonLabel: string | undefined;
 
   switch (type) {
     case "cancel":
@@ -131,7 +156,7 @@ export const AppointmentForm = ({
                 <CustomFormField
                   fieldType={FormFieldType.TEXTAREA}
                   control={form.control}
-                  name="notes"
+                  name="note"
                   label="Notes"
                   placeholder="Enter notes"
                 />
@@ -150,7 +175,9 @@ export const AppointmentForm = ({
         )}
         <SubmitButton
           isLoading={isLoading}
-          className={`${type === "cancel" ? "shad-danger-btn" : "shad-primary-btn"} w-full`}
+          className={`${
+            type === "cancel" ? "shad-danger-btn" : "shad-primary-btn"
+          } w-full`}
         >
           {buttonLabel}
         </SubmitButton>
