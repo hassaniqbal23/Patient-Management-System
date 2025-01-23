@@ -54,8 +54,18 @@ Install dependencies
 npm install
  
  Environment Setup Create a .env.local file:
-NEXT_PUBLIC_APPWRITE_PROJECT_ID=your_project_id
-NEXT_PUBLIC_APPWRITE_ENDPOINT=your_endpoint
+Create a `.env.local` file in the root directory with the following variables:
+
+```bash
+PROJECT_ID=your_project_id
+API_KEY=your_api_key
+DATABASE_ID=your_database_id
+PATIENT_COLLECTION_ID=ADD_YOUR_PATIENT_COLLECTION_ID
+DOCTOR_COLLECTION_ID=ADD_YOUR_DOCTOR_COLLECTION_ID
+APPOINTMENT_COLLECTION_ID=ADD_YOUR_APPOINTMENT_COLLECTION_ID
+NEXT_PUBLIC_BUCKET_ID=ADD_YOUR_PUBLIC_BUCKET_ID
+NEXT_PUBLIC_ENDPOINT=https://cloud.appwrite.io/v1
+NEXT_PUBLIC_ADMIN_PASSKEY=123456
 
 Run Development Server
 Open http://localhost:3000 in your browser.
