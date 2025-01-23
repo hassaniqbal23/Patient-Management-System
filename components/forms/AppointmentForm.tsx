@@ -20,7 +20,7 @@ import { useRouter } from "next/navigation";
 interface AppointmentFormProps {
   type: "create" | "cancel" | "schedule";
   userId: string;
-  patientId: string;
+  patientId: string | undefined;
 }
 export const AppointmentForm = ({
   type,
