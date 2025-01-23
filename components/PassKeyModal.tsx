@@ -1,5 +1,9 @@
 "use client";
 
+import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,49 +18,51 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { MouseEvent, useState } from "react";
+import { decryptKey, encryptKey } from "@/lib/utils";
 
-const PassKeyModal = () => {
+export const PassKeyModal = () => {
   const router = useRouter();
-  const [open, setOpen] = useState<boolean>(true);
+  const path = usePathname();
+  const [open, setOpen] = useState(false);
   const [passkey, setPasskey] = useState("");
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
-  const validatePasskey = async (e: MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError(""); // Clear any previous errors
+  const encryptedKey =
+    typeof window !== "undefined"
+      ? window.localStorage.getItem("accessKey")
+      : null;
 
-    try {
-      if (!passkey) {
-        setError("Please enter the passkey");
-        return;
-      }
+  useEffect(() => {
+    const accessKey = encryptedKey && decryptKey(encryptedKey);
 
-      if (passkey === process.env.NEXT_PUBLIC_ADMIN_PASSKEY) {
+    if (path)
+      if (accessKey === process.env.NEXT_PUBLIC_ADMIN_PASSKEY!.toString()) {
         setOpen(false);
         router.push("/admin");
       } else {
-        setError("Invalid passkey. Please try again.");
+        setOpen(true);
       }
-    } catch {
-      setError("An error occurred. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  }, [encryptedKey]);
 
   const closeModal = () => {
     setOpen(false);
     router.push("/");
   };
 
-  const handlePasskeyChange = (value: string) => {
-    setError(""); // Clear error when user types
-    setPasskey(value);
+  const validatePasskey = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+
+    if (passkey === process.env.NEXT_PUBLIC_ADMIN_PASSKEY) {
+      const encryptedKey = encryptKey(passkey);
+
+      localStorage.setItem("accessKey", encryptedKey);
+
+      setOpen(false);
+    } else {
+      setError("Invalid passkey. Please try again.");
+    }
   };
 
   return (
@@ -70,19 +76,19 @@ const PassKeyModal = () => {
               alt="close"
               width={20}
               height={20}
-              onClick={closeModal}
+              onClick={() => closeModal()}
               className="cursor-pointer"
             />
           </AlertDialogTitle>
           <AlertDialogDescription className="text-white">
-            To access the admin page, please enter the passkey
+            To access the admin page, please enter the passkey.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <div>
           <InputOTP
             maxLength={6}
             value={passkey}
-            onChange={handlePasskeyChange}
+            onChange={(value) => setPasskey(value)}
           >
             <InputOTPGroup className="shad-otp">
               <InputOTPSlot className="shad-otp-slot" index={0} />
@@ -93,24 +99,22 @@ const PassKeyModal = () => {
               <InputOTPSlot className="shad-otp-slot" index={5} />
             </InputOTPGroup>
           </InputOTP>
+
           {error && (
-            <p className="text-red-500 text-14-regular mt-4 flex justify-center">
+            <p className="shad-error text-14-regular mt-4 flex justify-center">
               {error}
             </p>
           )}
         </div>
         <AlertDialogFooter>
           <AlertDialogAction
-            onClick={validatePasskey}
+            onClick={(e) => validatePasskey(e)}
             className="shad-primary-btn w-full"
-            disabled={isLoading}
           >
-            {isLoading ? "Validating..." : "Enter Admin Passkey"}
+            Enter Admin Passkey
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   );
 };
-
-export default PassKeyModal;
