@@ -10,6 +10,10 @@ const Register = async ({ params: { userId } }: SearchParamProps) => {
 
   if (patient) redirect(`/patients/${userId}/new-appointment`);
 
+  if (!user) {
+    return <div>User not found</div>;
+  }
+
   return (
     <div className="flex h-screen max-h-screen">
       <section className="remove-scrollbar container">
