@@ -11,6 +11,7 @@ import {
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { MoreHorizontal } from "lucide-react";
+import StatusBadge from "../StatusBadge";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -23,8 +24,24 @@ export type Payment = {
 
 export const columns: ColumnDef<Payment>[] = [
   {
+    header: "ID",
+    cell: ({ row }) => <p className="text-14-meduim">{row.index + 1}</p>,
+  },
+  {
+    accessorKey: "patient",
+    header: "Patient",
+    cell: ({ row }) => (
+      <p className="text-14-medium">{row.original.patient.name}</p>
+    ),
+  },
+  {
     accessorKey: "status",
     header: "Status",
+    cell:({row})=>{
+      <div className="min-w-[115px]">
+        <StatusBadge />
+      </div>
+    }
   },
   {
     accessorKey: "email",
