@@ -4,7 +4,6 @@ import { ID, Query } from "node-appwrite";
 import {InputFile} from "node-appwrite/file"
 
 import {
-  APPOINTMENT_COLLECTION_ID,
   BUCKET_ID,
   DATABASE_ID,
   ENDPOINT,
@@ -15,7 +14,6 @@ import {
   users,
 } from "../appwrite.config";
 import { parseStringify } from "../utils";
-import { revalidatePath } from "next/cache";
 
 // CREATE APPWRITE USER
 export const createUser = async (user: CreateUserParams) => {
