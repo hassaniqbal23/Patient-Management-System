@@ -4,6 +4,7 @@ import { ID, Query } from "node-appwrite";
 import {InputFile} from "node-appwrite/file"
 
 import {
+  APPOINTMENT_COLLECTION_ID,
   BUCKET_ID,
   DATABASE_ID,
   ENDPOINT,
@@ -14,6 +15,7 @@ import {
   users,
 } from "../appwrite.config";
 import { parseStringify } from "../utils";
+import { revalidatePath } from "next/cache";
 
 // CREATE APPWRITE USER
 export const createUser = async (user: CreateUserParams) => {
@@ -118,3 +120,26 @@ export const getPatient = async (userId: string) => {
     return null;
   }
 };
+
+// export const updateAppointment = async ({
+//   appointmentId,
+//   userId,
+//   appointment,
+//   type,
+// }: UpdateAppointmentParams) => {
+//   try {
+//     const updatedAppointment = await databases.updateDocument(
+//       DATABASE_ID!,
+//       APPOINTMENT_COLLECTION_ID!,
+//       appointmentId,
+//       appointment
+//     );
+//     if(!updatedAppointment){
+//       throw new Error("Appointment not found");
+//     }
+//     revalidatePath("/admin");
+//     return parseStringify(updatedAppointment);
+//   } catch (error) {
+//     console.error("Error scheduling appointment:", error);
+//   }
+// };
