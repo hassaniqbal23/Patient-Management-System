@@ -46,7 +46,7 @@ export const AppointmentForm = ({
       schedule: appointment?.schedule ? new Date(appointment.schedule) : new Date(),
       reason: appointment?.reason || "",
       note: appointment?.note || "",
-      cancellationReason: "",
+      cancellationReason: appointment?.cancellationReason || "",
     },
   });
 
