@@ -120,7 +120,7 @@ export const updateAppointment = async ({
   appointmentId,
   userId,
   appointment,
-  type,
+  // type,
 }: UpdateAppointmentParams) => {
   try {
     // Update appointment to scheduled -> https://appwrite.io/docs/references/cloud/server-nodejs/databases#updateDocument
