@@ -118,7 +118,7 @@ export const getRecentAppointmentList = async () => {
 //  UPDATE APPOINTMENT
 export const updateAppointment = async ({
   appointmentId,
-  userId,
+  // userId,
   appointment,
   // type,
 }: UpdateAppointmentParams) => {
