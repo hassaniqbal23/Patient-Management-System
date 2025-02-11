@@ -3,12 +3,17 @@
 import { PatientForm } from "@/components/forms/PatientForm"
 import { PassKeyModal } from "@/components/PassKeyModal"
 import Image from "next/image"
-import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useSearchParams } from 'next/navigation'
 
 export default function Home() {
+  const router = useRouter()
   const searchParams = useSearchParams()
   const isAdmin = searchParams.get('admin') === "true"
+  
+  const handleAdminClick = () => {
+    router.push('/?admin=true')
+  }
   
   return (
     <div className="flex h-screen max-h-screen text-gray-300">
@@ -28,18 +33,21 @@ export default function Home() {
           <p className="justify-items-end text-dark-600 xl:text-left">
             © 2025 CarePulse
           </p>
-          <Link href="/?admin=true" className="text-green-500">
-            Admin 
-          </Link>
+          <button 
+            onClick={handleAdminClick}
+            className="text-green-500 hover:text-green-400 cursor-pointer"
+          >
+            Admin
+          </button>
         </div>
       </section>
       <Image 
-     src="/assets/images/onboarding-img.png"
-      alt="Patient"
-      width={1000}
-      height={1000}
-      className="side-img max-w-[50%]"
-    />
-  </div>
-)
+        src="/assets/images/onboarding-img.png"
+        alt="Patient"
+        width={1000}
+        height={1000}
+        className="side-img max-w-[50%]"
+      />
+    </div>
+  )
 }

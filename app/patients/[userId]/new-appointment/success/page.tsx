@@ -5,6 +5,8 @@ import { formatDateTime } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import * as Sentry from "@sentry/nextjs";
+import { getUser } from "@/lib/actions/patient.actions";
 
 interface SearchParamProps {
   params: {
@@ -29,6 +31,9 @@ const Success = async ({
   const doctor = Doctors.find(
     (doc) => doc.name === appointment.primaryPhysician
   );
+  const user = await getUser(userId);
+
+  Sentry.metrics.set("user_view_appointemnt-sucess", user.name);
 
   if (!doctor) {
     return notFound();
