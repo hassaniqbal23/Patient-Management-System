@@ -13,10 +13,8 @@ export default function Home() {
   console.log("isAdmin", isAdmin);
 
   const handleAdminClick = () => {
-    console.log("clicked");
     router.push("/?admin=true");
   };
-
   return (
     <div className="flex h-screen max-h-screen text-gray-300">
       {isAdmin && <PassKeyModal />}
