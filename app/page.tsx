@@ -3,21 +3,18 @@
 import { PatientForm } from "@/components/forms/PatientForm";
 import { PassKeyModal } from "@/components/PassKeyModal";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useSearchParams } from "next/navigation";
+import { useState } from "react";
 
 export default function Home() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const isAdmin = searchParams.get("admin") === "true";
-  console.log("isAdmin", isAdmin);
+  const [showModal, setShowModal] = useState(false);
 
   const handleAdminClick = () => {
-    router.push("/?admin=true");
+    setShowModal(true);
   };
+
   return (
     <div className="flex h-screen max-h-screen text-gray-300">
-      {isAdmin && <PassKeyModal />}
+      <PassKeyModal show={showModal} onClose={() => setShowModal(false)} />
       <section className="remove-scrollbar container my-auto">
         <div className="sub-container">
           <Image
