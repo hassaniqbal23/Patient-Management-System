@@ -2,8 +2,7 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,17 +17,31 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { encryptKey } from "@/lib/utils";
+import { encryptKey, decryptKey, getAuthCookie } from "@/lib/utils";
 
 interface PassKeyModalProps {
+  show: boolean;
   onClose: () => void;
 }
 
-export const PassKeyModal = ({ onClose }: PassKeyModalProps) => {
+export const PassKeyModal = ({ show, onClose }: PassKeyModalProps) => {
   const router = useRouter();
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(show);
   const [passkey, setPasskey] = useState("");
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    const authCookie = getAuthCookie();
+    if (authCookie) {
+      const decrypted = decryptKey(authCookie);
+      if (decrypted === process.env.NEXT_PUBLIC_ADMIN_PASSKEY) {
+        setOpen(false);
+        router.push("/admin");
+        return;
+      }
+    }
+    setOpen(show);
+  }, [show, router]);
 
   const closeModal = () => {
     setOpen(false);
@@ -41,15 +54,13 @@ export const PassKeyModal = ({ onClose }: PassKeyModalProps) => {
     e.preventDefault();
 
     if (passkey === process.env.NEXT_PUBLIC_ADMIN_PASSKEY) {
-      const encryptedKey = encryptKey(passkey);
-      localStorage.setItem("accessKey", encryptedKey);
+      encryptKey(passkey); // This will now set the cookie
       setOpen(false);
       router.push("/admin");
     } else {
       setError("Invalid passkey. Please try again.");
     }
   };
-
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogContent className="shad-alert-dialog">

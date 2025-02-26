@@ -1,4 +1,5 @@
 import { type ClassValue, clsx } from "clsx";
+import Cookies from "js-cookie";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -10,7 +11,10 @@ export const parseStringify = (value: any) => JSON.parse(JSON.stringify(value));
 export const convertFileToUrl = (file: File) => URL.createObjectURL(file);
 
 // FORMAT DATE TIME
-export const formatDateTime = (dateString: Date | string, timeZone: string = Intl.DateTimeFormat().resolvedOptions().timeZone) => {
+export const formatDateTime = (
+  dateString: Date | string,
+  timeZone: string = Intl.DateTimeFormat().resolvedOptions().timeZone
+) => {
   const dateTimeOptions: Intl.DateTimeFormatOptions = {
     // weekday: "short", // abbreviated weekday name (e.g., 'Mon')
     month: "short", // abbreviated month name (e.g., 'Oct')
@@ -73,9 +77,24 @@ export const formatDateTime = (dateString: Date | string, timeZone: string = Int
 };
 
 export function encryptKey(passkey: string) {
-  return btoa(passkey);
+  const encrypted = btoa(passkey);
+  // Set cookie with 24 hour expiration
+  Cookies.set("adminAuth", encrypted, {
+    expires: 1, // 1 day
+    secure: true,
+    sameSite: "strict",
+  });
+  return encrypted;
 }
 
-export function decryptKey(passkey: string) {
-  return atob(passkey);
+export function decryptKey(encryptedKey: string) {
+  return atob(encryptedKey);
+}
+
+export function getAuthCookie() {
+  return Cookies.get("adminAuth");
+}
+
+export function removeAuthCookie() {
+  Cookies.remove("adminAuth");
 }
