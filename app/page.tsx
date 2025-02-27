@@ -14,6 +14,7 @@ export default function Home() {
 
   const handleAdminClick = () => {
     router.push("/?admin=true");
+    console.log("clicked");
   };
   return (
     <div className="flex h-screen max-h-screen text-gray-300">
