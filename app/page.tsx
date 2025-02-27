@@ -3,23 +3,10 @@
 import { PatientForm } from "@/components/forms/PatientForm";
 import { PassKeyModal } from "@/components/PassKeyModal";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { getAuthCookie, decryptKey } from "@/lib/utils";
+import { useState } from "react";
 
 export default function Home() {
-  const router = useRouter();
   const [showModal, setShowModal] = useState(false);
-
-  useEffect(() => {
-    const authCookie = getAuthCookie();
-    if (authCookie) {
-      const decrypted = decryptKey(authCookie);
-      if (decrypted === process.env.NEXT_PUBLIC_ADMIN_PASSKEY) {
-        router.push("/admin");
-      }
-    }
-  }, [router]);
 
   const handleAdminClick = () => {
     setShowModal(true);
