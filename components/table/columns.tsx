@@ -7,7 +7,7 @@ import { Doctors } from "@/constants";
 import { formatDateTime } from "@/lib/utils";
 
 import { StatusBadge } from "../StatusBadge";
-import  {AppointmentModal}  from "../AppointmentModal";
+import { AppointmentModal } from "../AppointmentModal";
 import { Appointment } from "@/types/appwite.types";
 // import A
 
@@ -27,7 +27,7 @@ export const columns: ColumnDef<Appointment>[] = [
     },
   },
   {
-    accessorKey: "status", 
+    accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
       const appointment = row.original;
@@ -63,7 +63,7 @@ export const columns: ColumnDef<Appointment>[] = [
       return (
         <div className="flex items-center gap-3">
           <Image
-            src={doctor?.image!}
+            src={doctor?.image || "/default-image.png"}
             alt="doctor"
             width={100}
             height={100}

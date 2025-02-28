@@ -2,8 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { ID, Query } from "node-appwrite";
-
-import { Appointment } from "@/types/appwrite.types";
+import * as Sentry from "@sentry/nextjs";
 
 import {
   APPOINTMENT_COLLECTION_ID,
@@ -13,14 +12,17 @@ import {
 } from "../appwrite.config";
 import { formatDateTime, parseStringify } from "../utils";
 
-//  CREATE APPOINTMENT
 export const createAppointment = async (
   appointment: CreateAppointmentParams
 ) => {
   try {
+    if (!databases || !DATABASE_ID || !APPOINTMENT_COLLECTION_ID) {
+      throw new Error("Database configuration missing");
+    }
+
     const newAppointment = await databases.createDocument(
-      DATABASE_ID!,
-      APPOINTMENT_COLLECTION_ID!,
+      DATABASE_ID,
+      APPOINTMENT_COLLECTION_ID,
       ID.unique(),
       appointment
     );
@@ -28,46 +30,25 @@ export const createAppointment = async (
     revalidatePath("/admin");
     return parseStringify(newAppointment);
   } catch (error) {
-    console.error("An error occurred while creating a new appointment:", error);
+    console.error("Error creating appointment:", error);
+    Sentry.captureException(error);
+    throw error;
   }
 };
 
-//  GET RECENT APPOINTMENTS
 export const getRecentAppointmentList = async () => {
   try {
+    if (!databases || !DATABASE_ID || !APPOINTMENT_COLLECTION_ID) {
+      throw new Error("Database configuration missing");
+    }
+
     const appointments = await databases.listDocuments(
-      DATABASE_ID!,
-      APPOINTMENT_COLLECTION_ID!,
+      DATABASE_ID,
+      APPOINTMENT_COLLECTION_ID,
       [Query.orderDesc("$createdAt")]
     );
 
-    // const scheduledAppointments = (
-    //   appointments.documents as Appointment[]
-    // ).filter((appointment) => appointment.status === "scheduled");
-
-    // const pendingAppointments = (
-    //   appointments.documents as Appointment[]
-    // ).filter((appointment) => appointment.status === "pending");
-
-    // const cancelledAppointments = (
-    //   appointments.documents as Appointment[]
-    // ).filter((appointment) => appointment.status === "cancelled");
-
-    // const data = {
-    //   totalCount: appointments.total,
-    //   scheduledCount: scheduledAppointments.length,
-    //   pendingCount: pendingAppointments.length,
-    //   cancelledCount: cancelledAppointments.length,
-    //   documents: appointments.documents,
-    // };
-
-    const initialCounts = {
-      scheduledCount: 0,
-      pendingCount: 0,
-      cancelledCount: 0,
-    };
-
-    const counts = (appointments.documents as Appointment[]).reduce(
+    const counts = appointments.documents.reduce(
       (acc, appointment) => {
         switch (appointment.status) {
           case "scheduled":
@@ -82,28 +63,26 @@ export const getRecentAppointmentList = async () => {
         }
         return acc;
       },
-      initialCounts
+      { scheduledCount: 0, pendingCount: 0, cancelledCount: 0 }
     );
 
-    const data = {
-      totalCount: appointments.total,
+    return {
       ...counts,
       documents: appointments.documents,
     };
-
-    return parseStringify(data);
   } catch (error) {
-    console.error(
-      "An error occurred while retrieving the recent appointments:",
-      error
-    );
+    console.error("Error fetching appointments:", error);
+    Sentry.captureException(error);
+    throw error;
   }
 };
 
-//  SEND SMS NOTIFICATION
 export const sendSMSNotification = async (userId: string, content: string) => {
   try {
-    // https://appwrite.io/docs/references/1.5.x/server-nodejs/messaging#createSms
+    if (!messaging) {
+      throw new Error("Messaging service not initialized");
+    }
+
     const message = await messaging.createSms(
       ID.unique(),
       content,
@@ -112,11 +91,12 @@ export const sendSMSNotification = async (userId: string, content: string) => {
     );
     return parseStringify(message);
   } catch (error) {
-    console.error("An error occurred while sending sms:", error);
+    console.error("Error sending SMS notification:", error);
+    Sentry.captureException(error);
+    throw error;
   }
 };
 
-//  UPDATE APPOINTMENT
 export const updateAppointment = async ({
   appointmentId,
   userId,
@@ -125,40 +105,58 @@ export const updateAppointment = async ({
   type,
 }: UpdateAppointmentParams) => {
   try {
-    // Update appointment to scheduled -> https://appwrite.io/docs/references/cloud/server-nodejs/databases#updateDocument
+    if (!databases || !DATABASE_ID || !APPOINTMENT_COLLECTION_ID) {
+      throw new Error("Database configuration missing");
+    }
+
     const updatedAppointment = await databases.updateDocument(
-      DATABASE_ID!,
-      APPOINTMENT_COLLECTION_ID!,
+      DATABASE_ID,
+      APPOINTMENT_COLLECTION_ID,
       appointmentId,
       appointment
     );
 
-    if (!updatedAppointment) throw Error;
+    if (!updatedAppointment) {
+      throw new Error("Failed to update appointment");
+    }
 
-    const smsMessage = `Greetings from CarePulse. ${type === "schedule" ? `Your appointment is confirmed for ${formatDateTime(appointment.schedule!, timeZone).dateTime} with Dr. ${appointment.primaryPhysician}` : `We regret to inform that your appointment for ${formatDateTime(appointment.schedule!, timeZone).dateTime} is cancelled. Reason:  ${appointment.cancellationReason}`}.`;
+    const smsMessage = `Greetings from CarePulse. ${
+      type === "schedule"
+        ? `Your appointment is confirmed for ${
+            formatDateTime(appointment.schedule!, timeZone).dateTime
+          } with Dr. ${appointment.primaryPhysician}`
+        : `We regret to inform that your appointment for ${
+            formatDateTime(appointment.schedule!, timeZone).dateTime
+          } is cancelled. Reason: ${appointment.cancellationReason}`
+    }.`;
+
     await sendSMSNotification(userId, smsMessage);
-
     revalidatePath("/admin");
+
     return parseStringify(updatedAppointment);
   } catch (error) {
-    console.error("An error occurred while scheduling an appointment:", error);
+    console.error("Error updating appointment:", error);
+    Sentry.captureException(error);
+    throw error;
   }
 };
 
-// GET APPOINTMENT
 export const getAppointment = async (appointmentId: string) => {
   try {
+    if (!databases || !DATABASE_ID || !APPOINTMENT_COLLECTION_ID) {
+      throw new Error("Database configuration missing");
+    }
+
     const appointment = await databases.getDocument(
-      DATABASE_ID!,
-      APPOINTMENT_COLLECTION_ID!,
+      DATABASE_ID,
+      APPOINTMENT_COLLECTION_ID,
       appointmentId
     );
 
     return parseStringify(appointment);
   } catch (error) {
-    console.error(
-      "An error occurred while retrieving the existing patient:",
-      error
-    );
+    console.error("Error retrieving appointment:", error);
+    Sentry.captureException(error);
+    throw error;
   }
 };
