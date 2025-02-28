@@ -1,24 +1,41 @@
-import * as sdk from "node-appwrite";
+import { Client, Databases, Users, Messaging } from "node-appwrite";
+
 export const {
   NEXT_PUBLIC_ENDPOINT: ENDPOINT,
   PROJECT_ID,
   API_KEY,
   DATABASE_ID,
   PATIENT_COLLECTION_ID,
-  DOCTOR_COLLECTION_ID,
   APPOINTMENT_COLLECTION_ID,
-  NEXT_PUBLIC_BUCKET_ID: BUCKET_ID,
 } = process.env;
 
-if (!ENDPOINT || !PROJECT_ID || !API_KEY || !DATABASE_ID || !PATIENT_COLLECTION_ID || !BUCKET_ID) {
+// Validate environment variables
+if (
+  !ENDPOINT ||
+  !PROJECT_ID ||
+  !API_KEY ||
+  !DATABASE_ID ||
+  !PATIENT_COLLECTION_ID ||
+  !APPOINTMENT_COLLECTION_ID
+) {
   throw new Error("Missing required environment variables");
 }
 
-const client = new sdk.Client();
+let client: Client;
+let databases: Databases;
+let users: Users;
+let messaging: Messaging;
 
-client.setEndpoint(ENDPOINT).setProject(PROJECT_ID).setKey(API_KEY);
+// Initialize Appwrite clients only on the server side
+if (typeof window === "undefined") {
+  client = new Client()
+    .setEndpoint(ENDPOINT)
+    .setProject(PROJECT_ID)
+    .setKey(API_KEY);
 
-export const databases = new sdk.Databases(client);
-export const storage = new sdk.Storage(client);
-export const users = new sdk.Users(client);
-export const messaging = new sdk.Messaging(client);
+  databases = new Databases(client);
+  users = new Users(client);
+  messaging = new Messaging(client);
+}
+
+export { databases, users, messaging };

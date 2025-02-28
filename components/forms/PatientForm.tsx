@@ -17,6 +17,7 @@ import SubmitButton from "../SubmitButton";
 export const PatientForm = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof UserFormValidation>>({
     resolver: zodResolver(UserFormValidation),
@@ -29,30 +30,32 @@ export const PatientForm = () => {
 
   const onSubmit = async (values: z.infer<typeof UserFormValidation>) => {
     setIsLoading(true);
+    setError(null);
 
     try {
-      const user = {
+      const userData: CreateUserParams = {
         name: values.name,
         email: values.email,
         phone: values.phone,
       };
 
-      const newUser = await createUser(user);
-      console.log(newUser,"newUser");
+      const newUser = await createUser(userData);
 
       if (newUser) {
         router.push(`/patients/${newUser.$id}/register`);
       }
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      console.error("Error creating user:", error);
+      setError(error.message || "Failed to create user. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
-
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 space-y-6">
+        {error && <div className="text-red-500 text-sm">{error}</div>}
+
         <section className="mb-12 space-y-4">
           <h1 className="header">Hi there 👋</h1>
           <p className="text-dark-700">Get started with appointments.</p>
