@@ -11,7 +11,7 @@ const AdminContent = async () => {
   let appointments;
   try {
     appointments = await getRecentAppointmentList();
-    console.log(appointments, "appointments data");
+    // console.log(appointments, "appointments data");
   } catch (error: any) {
     console.error("Admin page error:", error.message);
     appointments = {
