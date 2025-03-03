@@ -10,7 +10,7 @@ export default function Home() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const isAdmin = searchParams.get("admin") === "true";
-  console.log("isAdmin", isAdmin);
+  // console.log("isAdmin", isAdmin);
 
   const handleAdminClick = () => {
     router.push("/?admin=true");

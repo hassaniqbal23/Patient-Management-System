@@ -27,16 +27,14 @@ export const getPatient = async (userId: string) => {
 
 export const getUser = async (userId: string) => {
   try {
-    if (!users) {
-      throw new Error("Users service not initialized");
-    }
-
     const user = await users.get(userId);
+
     return parseStringify(user);
   } catch (error) {
-    console.error("Error getting user:", error);
-    Sentry.captureException(error);
-    throw error;
+    console.error(
+      "An error occurred while retrieving the user details:",
+      error
+    );
   }
 };
 
