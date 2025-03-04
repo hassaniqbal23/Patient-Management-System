@@ -27,7 +27,6 @@ import FileUploader from "../FileUploader";
 import { registerPatient } from "@/lib/actions/patient.actions";
 
 const RegisterForm = ({ user }: { user: User }) => {
-  // console.log(user)
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -88,7 +87,6 @@ const RegisterForm = ({ user }: { user: User }) => {
 
       // console.log(patient.gender,"gender")
       const newPatient = await registerPatient(patient);
-      console.log(newPatient,"new patient")
 
       if (newPatient) {
         router.push(`/patients/${user.$id}/new-appointment`);
@@ -148,8 +146,8 @@ const RegisterForm = ({ user }: { user: User }) => {
             />
           </div>
 
-        {/* BirthDate & Gender */}
-        <div className="flex flex-col gap-6 xl:flex-row">
+          {/* BirthDate & Gender */}
+          <div className="flex flex-col gap-6 xl:flex-row">
             <CustomFormField
               fieldType={FormFieldType.DATE_PICKER}
               control={form.control}
@@ -172,8 +170,11 @@ const RegisterForm = ({ user }: { user: User }) => {
                     {GenderOptions.map((option, i) => (
                       <div key={option + i} className="radio-group">
                         <RadioGroupItem value={option} id={option} />
-                        <Label htmlFor={option} className="cursor-pointer text-white">
-                          {option} 
+                        <Label
+                          htmlFor={option}
+                          className="cursor-pointer text-white"
+                        >
+                          {option}
                         </Label>
                       </div>
                     ))}
@@ -311,7 +312,9 @@ const RegisterForm = ({ user }: { user: User }) => {
 
         <section className="space-y-6">
           <div className="mb-9 space-y-1">
-            <h2 className="sub-header text-white">Identification and Verfication</h2>
+            <h2 className="sub-header text-white">
+              Identification and Verfication
+            </h2>
           </div>
 
           <CustomFormField
